@@ -6,10 +6,11 @@ BACKUP_DAYS=$(eval echo ${BACKUP_DAYS})
 MYSQL_DB_HOST=$(eval echo ${MYSQL_DB_HOST})
 MYSQL_DB_USER=$(eval echo ${MYSQL_DB_USER})
 MYSQL_DB_PWD=$(eval echo ${MYSQL_DB_PWD})
+MYSQL_DB_PORT=$(eval echo ${MYSQL_DB_PORT})
 MYSQL_DB_NAME=$(eval echo ${MYSQL_DB_NAME})
 MYSQL_BACKUP_CUSTOM_OPTION=$(eval echo ${MYSQL_BACKUP_CUSTOM_OPTION})
 
-DATESTR=$(date +%Y-%m-%d_%T)
+DATESTR=$(date +%Y-%m-%d)
 
 
 # 如果没有设置过期天数 则默认7天
@@ -29,6 +30,6 @@ cd /mysql_backups
 find . -type f -mtime +${BACKUP_DAYS} -exec rm -f {} \;
 
 # 备份并压缩指定数据库
-mysqldump -h "${MYSQL_DB_HOST}" -u "${MYSQL_DB_USER}" -p"${MYSQL_DB_PWD}" ${MYSQL_BACKUP_CUSTOM_OPTION} --databases "${MYSQL_DB_NAME}" > backup.sql
-tar -czf ${DATESTR}_backup.tar.gz backup.sql
-rm backup.sql
+mysqldump -h "${MYSQL_DB_HOST}" -u "${MYSQL_DB_USER}" -p"${MYSQL_DB_PWD}" -P "${MYSQL_DB_PORT}" ${MYSQL_BACKUP_CUSTOM_OPTION} --databases "${MYSQL_DB_NAME}" > ${MYSQL_DB_NAME}_backup.sql
+tar -czf ${DATESTR}_${MYSQL_DB_NAME}_backup.tar.gz ${MYSQL_DB_NAME}_backup.sql
+rm ${MYSQL_DB_NAME}_backup.sql
